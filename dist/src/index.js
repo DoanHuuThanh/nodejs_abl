@@ -13,6 +13,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const sessions_1 = __importDefault(require("./routes/sessions"));
+const admins_1 = __importDefault(require("./routes/admins"));
 const corsOptions = {
     origin: 'http://localhost:5173',
     optionsSuccessStatus: 200,
@@ -28,6 +29,7 @@ app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/public/uploads', express_1.default.static(path_1.default.join(__dirname, 'public/uploads')));
 app.use((0, cors_1.default)(corsOptions));
 app.use('/sessions', sessions_1.default);
+app.use('/admins', admins_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next((0, http_errors_1.default)(404));

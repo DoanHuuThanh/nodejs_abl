@@ -21,10 +21,7 @@ interface LoginResponse {
 
 const adminLogin = async (admin: Admin): Promise<LoginResponse | null> => {
   const { id_login, password } = admin;
-  console.log(admin)
-  console.log(id_login)
   try {
-    console.log(id_login)
     const dbAdmin: DbAdmin | undefined = await db('admins')
       .where({ id_login })
       .first();
@@ -47,7 +44,7 @@ const adminLogin = async (admin: Admin): Promise<LoginResponse | null> => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret', {
-      expiresIn: '1h',
+      expiresIn: '12h',
     });
 
     const { password: _, ...admin } = dbAdmin;

@@ -9,9 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const knex_1 = __importDefault(require("../../db/knex"));
 const adminLogin = async (admin) => {
     const { id_login, password } = admin;
-    console.log(id_login);
     try {
-        console.log(id_login);
         const dbAdmin = await (0, knex_1.default)('admins')
             .where({ id_login })
             .first();

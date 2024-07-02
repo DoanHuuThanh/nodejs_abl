@@ -3,13 +3,13 @@ import jwt, { Secret } from 'jsonwebtoken';
 import db from '../db/knex'; 
 import { Admin } from '../config/interface'; 
 
-interface RequestWithUser extends Request {
+interface RequestWitAdmin extends Request {
   admin?: Admin; 
 }
 
-async function authMiddleware(req: RequestWithUser, res: Response, next: NextFunction) {
-  const token: string | undefined = req.header('x-auth-token');
-
+async function authMiddleware(req: RequestWitAdmin, res: Response, next: NextFunction) {
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: 'Không có token, xác thực bị từ chối' });
   }
@@ -18,16 +18,16 @@ async function authMiddleware(req: RequestWithUser, res: Response, next: NextFun
     const secretKey: Secret = process.env.JWT_SECRET as Secret;
 
     const decoded: any = jwt.verify(token, secretKey);
+    console.log(token)
+    const adminId: number = decoded.admin.id; 
 
-    const userId: number = decoded.user.id; 
+    const dbAdmin: Admin | undefined = await db('admins').where({ id: adminId }).first();
 
-    const dbUser: Admin | undefined = await db('users').where({ id: userId }).first();
-
-    if (!dbUser) {
+    if (!dbAdmin) {
       return res.status(404).json({ message: 'Người dùng không tồn tại' });
     }
   
-    req.admin = dbUser; // Attach user object to request
+    req.admin = dbAdmin; 
     next();
   } catch (error) {
     console.error('Lỗi xác thực token:', error);
@@ -35,4 +35,4 @@ async function authMiddleware(req: RequestWithUser, res: Response, next: NextFun
   }
 }
 
-export default authMiddleware;
+export { authMiddleware }

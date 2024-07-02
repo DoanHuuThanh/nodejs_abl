@@ -66,7 +66,7 @@ router.post('/admins/sign_in', async (req, res) => {
     try {
         const authenticate = await (0, admin_login_1.adminLogin)(req.body);
         if (authenticate) {
-            res.status(201).json({ user: authenticate.admin, token: authenticate.token, status: 200, message: 'Login successful' });
+            res.status(201).json({ admin: authenticate.admin, token: authenticate.token, status: 200, message: 'Login successful' });
         }
         else {
             res.status(500).json({ status: 404, message: 'User not found' });

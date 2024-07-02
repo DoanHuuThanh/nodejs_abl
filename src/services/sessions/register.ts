@@ -4,7 +4,7 @@ import knex from '../../db/knex';
 interface UserData {
   line_id: string;
   line_name: string;
-  birth_day: string; // hoặc có thể là Date tùy thuộc vào cấu trúc của database
+  birth_day: string;
   email: string;
   phone_number: string;
   address: string;

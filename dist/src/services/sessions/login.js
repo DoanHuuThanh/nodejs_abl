@@ -15,12 +15,12 @@ const login = async (user) => {
             .first();
         if (!dbUser) {
             console.error('Tài khoản không tồn tại');
-            return null; // Có thể trả về null hoặc throw error
+            return null;
         }
         const isMatch = await bcryptjs_1.default.compare(password, dbUser.password);
         if (!isMatch) {
             console.error('Mật khẩu không đúng');
-            return null; // Có thể trả về null hoặc throw error
+            return null;
         }
         const payload = {
             user: {

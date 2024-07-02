@@ -29,13 +29,13 @@ const login = async (user: User): Promise<LoginResponse | null> => {
 
     if (!dbUser) {
       console.error('Tài khoản không tồn tại');
-      return null; // Có thể trả về null hoặc throw error
+      return null;
     }
 
     const isMatch = await bcrypt.compare(password, dbUser.password);
     if (!isMatch) {
       console.error('Mật khẩu không đúng');
-      return null; // Có thể trả về null hoặc throw error
+      return null;
     }
 
     const payload = {

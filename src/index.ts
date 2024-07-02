@@ -10,6 +10,7 @@ import logger from 'morgan';
 import cors from 'cors';
 
 import sessionsRouter from './routes/sessions';
+import adminsRouter from './routes/admins';
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -31,6 +32,7 @@ app.use('/public/uploads', express.static(path.join(__dirname, 'public/uploads')
 app.use(cors(corsOptions));
 
 app.use('/sessions', sessionsRouter);
+app.use('/admins', adminsRouter);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
