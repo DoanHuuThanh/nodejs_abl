@@ -28,7 +28,7 @@ const adminLogin = async (admin) => {
             },
         };
         const token = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret', {
-            expiresIn: '1h',
+            expiresIn: '12h',
         });
         const { password: _, ...admin } = dbAdmin;
         return { admin: admin, token };
