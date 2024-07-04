@@ -7,8 +7,7 @@ exports.getProductTemplate = exports.updateProductTemplate = void 0;
 const knex_1 = __importDefault(require("../../db/knex"));
 const updateProductTemplate = async (type, value, admin) => {
     try {
-        const updateData = {};
-        console.log(updateData);
+        const updateData = {}; //Partial tao 1 object tu ProductTeamplate
         if (type === 'product_detail_template1') {
             updateData.product_detail_template1 = value;
         }

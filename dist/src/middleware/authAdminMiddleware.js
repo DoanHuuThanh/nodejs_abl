@@ -15,7 +15,6 @@ async function authMiddleware(req, res, next) {
     try {
         const secretKey = process.env.JWT_SECRET;
         const decoded = jsonwebtoken_1.default.verify(token, secretKey);
-        console.log(token);
         const adminId = decoded.admin.id;
         const dbAdmin = await (0, knex_1.default)('admins').where({ id: adminId }).first();
         if (!dbAdmin) {

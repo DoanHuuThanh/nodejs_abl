@@ -75,8 +75,8 @@ export interface Admin {
     starting_price_id: number;
     name?: string;
     description?: string;
-    time_start?: Date;
-    time_end?: Date;
+    time_start?: string; // Kiểu dữ liệu là string cho datetime
+    time_end?: string; 
     created_at: Date;
     updated_at: Date;
   }

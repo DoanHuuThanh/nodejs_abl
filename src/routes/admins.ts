@@ -6,10 +6,37 @@ import { createCategory, deleteCategory, getCategory } from '../services/admin/c
 import { createRank, deleteRank, getRank } from '../services/admin/rank';
 import { createStartingPrice, deleteStartingPrice, getStartingPrice } from '../services/admin/start_price';
 import { updateProductTemplate, getProductTemplate } from '../services/admin/product_template';
+import { createProduct, getProductsWithDetails } from '../services/admin/product';
+import multer from 'multer';
+
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'src/public/uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req: any, file: any, cb: any) => {
+  if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+      cb(null, true);
+  } else {
+      cb(new Error('Invalid file type'), false);
+  }
+};
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+
 interface RequestWithAdmin extends Request {
+  admin?: Admin; 
+}
+
+interface RequestWithFiles extends Request {
+  files?: Express.Multer.File[] | { [file: string]: Express.Multer.File[] };
   admin?: Admin; 
 }
 
@@ -265,5 +292,60 @@ router.get('/brands', authMiddleware, async (req: RequestWithAdmin, res: Respons
           res.status(500).json({ status: 500, message: 'product_template creation error' });
         }
       });
+
+      router.get('/product_template', authMiddleware, async (req: RequestWithAdmin, res: Response) => {
+        try {
+          if (req.admin) {
+            const product_template = await getProductTemplate(req.admin);
+            if (product_template) {
+              res.status(201).json({  product_template1: product_template.product_detail_template1,product_template2: product_template.product_detail_template2,product_template3: product_template.product_detail_template3, status: 200 });
+            } else {
+              res.status(500).json({ status: 404, message: 'product_template not created' });
+            }
+          } else {
+            res.status(401).json({ status: 401, message: 'Unauthorized' });
+          }
+        } catch (error) {
+          res.status(500).json({ status: 500, message: 'product_template creation error' });
+        }
+      });
+
+      //product 
+      router.post('/product',authMiddleware, upload.array('file'), async (req: RequestWithFiles, res: Response) => {
+            try {
+              if (req.admin) {
+                const product = await createProduct(req);
+                if (product) {
+                  res.status(201).json({ product: product , status: 200, message: "create product successful" });
+                } else {
+                  res.status(500).json({ status: 404, message: 'product not created' });
+                }
+              } else {
+                res.status(401).json({ status: 401, message: 'Unauthorized' });
+              }
+            } catch (error) {
+              res.status(500).json({ status: 500, message: 'product_template creation error' });
+            }
+    });
+
+
+    router.get('/products',authMiddleware, async (req: RequestWithAdmin, res: Response) => {
+      try {
+        if (req.admin) {
+          const product = await getProductsWithDetails(req.admin.id);
+          if (product) {
+            res.status(201).json({ product: product , status: 200, message: "create product successful" });
+          } else {
+            res.status(500).json({ status: 404, message: 'product not created' });
+          }
+        } else {
+          res.status(401).json({ status: 401, message: 'Unauthorized' });
+        }
+      } catch (error) {
+        res.status(500).json({ status: 500, message: 'product_template creation error' });
+      }
+   });
+
+
 
 export default router;

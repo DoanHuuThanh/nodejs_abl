@@ -10,7 +10,26 @@ const category_1 = require("../services/admin/category");
 const rank_1 = require("../services/admin/rank");
 const start_price_1 = require("../services/admin/start_price");
 const product_template_1 = require("../services/admin/product_template");
+const product_1 = require("../services/admin/product");
+const multer_1 = __importDefault(require("multer"));
 const router = express_1.default.Router();
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    },
+});
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+        cb(null, true);
+    }
+    else {
+        cb(new Error('Invalid file type'), false);
+    }
+};
+const upload = (0, multer_1.default)({ storage: storage, fileFilter: fileFilter });
 router.post('/brands', authAdminMiddleware_1.authMiddleware, async (req, res) => {
     try {
         if (req.admin) {
@@ -280,6 +299,64 @@ router.get('/product_template', authAdminMiddleware_1.authMiddleware, async (req
             }
             else {
                 res.status(500).json({ status: 404, message: 'product_template not created' });
+            }
+        }
+        else {
+            res.status(401).json({ status: 401, message: 'Unauthorized' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ status: 500, message: 'product_template creation error' });
+    }
+});
+router.get('/product_template', authAdminMiddleware_1.authMiddleware, async (req, res) => {
+    try {
+        if (req.admin) {
+            const product_template = await (0, product_template_1.getProductTemplate)(req.admin);
+            if (product_template) {
+                res.status(201).json({ product_template1: product_template.product_detail_template1, product_template2: product_template.product_detail_template2, product_template3: product_template.product_detail_template3, status: 200 });
+            }
+            else {
+                res.status(500).json({ status: 404, message: 'product_template not created' });
+            }
+        }
+        else {
+            res.status(401).json({ status: 401, message: 'Unauthorized' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ status: 500, message: 'product_template creation error' });
+    }
+});
+//product 
+router.post('/product', authAdminMiddleware_1.authMiddleware, upload.array('file'), async (req, res) => {
+    try {
+        if (req.admin) {
+            const product = await (0, product_1.createProduct)(req);
+            if (product) {
+                res.status(201).json({ product: product, status: 200, message: "create product successful" });
+            }
+            else {
+                res.status(500).json({ status: 404, message: 'product not created' });
+            }
+        }
+        else {
+            res.status(401).json({ status: 401, message: 'Unauthorized' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ status: 500, message: 'product_template creation error' });
+    }
+});
+router.get('/products', authAdminMiddleware_1.authMiddleware, async (req, res) => {
+    try {
+        if (req.admin) {
+            const product = await (0, product_1.getProductsWithDetails)(req.admin.id);
+            if (product) {
+                res.status(201).json({ product: product, status: 200, message: "create product successful" });
+            }
+            else {
+                res.status(500).json({ status: 404, message: 'product not created' });
             }
         }
         else {

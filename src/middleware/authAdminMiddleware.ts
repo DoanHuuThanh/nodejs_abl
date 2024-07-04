@@ -18,7 +18,6 @@ async function authMiddleware(req: RequestWitAdmin, res: Response, next: NextFun
     const secretKey: Secret = process.env.JWT_SECRET as Secret;
 
     const decoded: any = jwt.verify(token, secretKey);
-    console.log(token)
     const adminId: number = decoded.admin.id; 
 
     const dbAdmin: Admin | undefined = await db('admins').where({ id: adminId }).first();
